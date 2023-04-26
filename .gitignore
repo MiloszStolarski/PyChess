@@ -1,0 +1,5 @@
+.idea/
+__pycache__/
+logic/__pycache__/
+menu/__pycache__/
+visual/__pycache__/
