@@ -21,6 +21,6 @@ names = ['bishop_black',
 output_png_width = output_png_height = 110
 
 for name in names:
-    cairosvg.svg2png(url=f'images/{name}.svg', write_to=f'images_{output_png_width}px/{name}.png', output_width=output_png_width, output_height=output_png_height)
+    cairosvg.svg2png(url=f'images/images_svg/{name}.svg', write_to=f'images_{output_png_width}px/{name}.png', output_width=output_png_width, output_height=output_png_height)
 
 print('DONE')

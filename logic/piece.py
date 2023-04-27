@@ -16,7 +16,7 @@ class Piece:
 
     def set_image(self, size=DEFAULT_SIZE):
         self.image_path = os.path.join(
-            f'images_{size}px/{self.name}_{self.color}.png'
+            f'images/images_{size}px/{self.name}_{self.color}.png'
         )
 
     def add_move(self, move):
