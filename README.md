@@ -25,10 +25,12 @@ It is designed to mirror the game of chess using a computer. This application do
   - all kinds of chess rules like: Castling, En passant, Promotion, Checkmate, Mate, Stalemate...
   - menu
   - LAN games
+  - turn the script into an app
   - ...
 
 <br>
 Image illustrating state of work:
+<br>
 <br>
 
 ![State of work](/images/state_of_work.png)
