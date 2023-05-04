@@ -60,4 +60,6 @@ class Queen(Piece):
 class King(Piece):
 
     def __init__(self, color):
+        self.closer_rook = None
+        self.further_rook = None
         super().__init__('king', color, 4)

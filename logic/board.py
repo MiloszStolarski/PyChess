@@ -25,6 +25,12 @@ class Board:
         if isinstance(piece, Pawn):
             self.check_promotion(piece, stop)
 
+        if isinstance(piece, King):
+            if self.castling(start, stop):
+                diff = stop.column - start.column
+                rook = piece.further_rook if (diff < 0) else piece.closer_rook
+                self.move(rook, rook.moves[-1])
+
         piece.moved = True
         piece.clear_moves()
 
@@ -129,12 +135,48 @@ class Board:
                         break
 
         def king_moves(moves):
-            if not piece.moved:
-                pass
-
             around_moves(king_normal_moves)
+            if not piece.moved:
+                closer_rook = self.fields[7][row].piece
+                further_rook = self.fields[0][row].piece
+                if isinstance(further_rook, Rook) and not further_rook.moved:
+                    # checking if is piece between Rook and King
+                    # to add check method
+                    for c in range(1, 4):
+                        if self.fields[c][row].is_not_empty():
+                            break
+                        if c == 3:
+                            piece.further_rook = further_rook
 
-        # -------------- #
+                            start = Field(0, row)
+                            stop = Field(3, row)
+                            move = Move(start, stop)
+                            further_rook.add_move(move)
+
+                            start = Field(column, row)
+                            stop = Field(2, row)
+                            move = Move(start, stop)
+                            piece.add_move(move)
+
+                if isinstance(closer_rook, Rook) and not closer_rook.moved:
+                    # checking if is piece between Rook and King
+                    for c in range(5, 7):
+                        if self.fields[c][row].is_not_empty():
+                            break
+                        if c == 6:
+                            piece.closer_rook = closer_rook
+
+                            start = Field(7, row)
+                            stop = Field(5, row)
+                            move = Move(start, stop)
+                            closer_rook.add_move(move)
+
+                            start = Field(column, row)
+                            stop = Field(6, row)
+                            move = Move(start, stop)
+                            piece.add_move(move)
+
+        # ---------------------------- #
         if isinstance(piece, Pawn):
             pawn_moves()
         elif isinstance(piece, Knight):
@@ -176,7 +218,7 @@ class Board:
             self.fields[stop.column][stop.row].piece = Queen(piece.color)
 
     def castling(self, start, stop):
-        pass
+        return abs(start.column - stop.column) == 2
 
     def in_check(self, piece, move):
         temp_piece = copy.deepcopy(piece)
