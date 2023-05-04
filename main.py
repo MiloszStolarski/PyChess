@@ -98,7 +98,7 @@ class Main:
                     pygame.quit()
                     raise SystemExit
 
-            # Logical updates MOJE
+            # Logical updates
             for obj in self.objects:
                 obj.process(self.screen)
 

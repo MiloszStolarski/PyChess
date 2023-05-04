@@ -1,3 +1,5 @@
+import copy
+
 from logic.const import ROWS, COLUMNS
 from logic.field import Field
 from logic.piece import *
@@ -32,7 +34,7 @@ class Board:
     def valid_move(piece, move):
         return move in piece.moves
 
-    def allowed_moves(self, piece, column, row):
+    def allowed_moves(self, piece, column, row, check_verify=True):
         """Check possible moves for piece"""
         piece.clear_moves()
 
@@ -47,9 +49,16 @@ class Board:
                     if self.fields[column][possible_move].is_empty():
                         start = Field(column, row)
                         stop = Field(column, possible_move)
-                        piece.add_move(Move(start, stop))
+                        move = Move(start, stop)
+                        if check_verify:
+                            if not self.in_check(piece, move):
+                                piece.add_move(move)
+                        else:
+                            piece.add_move(move)
                     else:
                         break
+                else:
+                    break
 
             # capture piece
             possible_columns = [column - 1, column + 1]
@@ -58,8 +67,14 @@ class Board:
                 if Field.in_range(possible_move, possible_row):
                     if self.fields[possible_move][possible_row].is_opponent(piece.color):
                         start = Field(column, row)
-                        stop = Field(possible_move, possible_row)
-                        piece.add_move(Move(start, stop))
+                        final_piece = self.fields[possible_move][possible_row].piece
+                        stop = Field(possible_move, possible_row, final_piece)
+                        move = Move(start, stop)
+                        if check_verify:
+                            if not self.in_check(piece, move):
+                                piece.add_move(move)
+                        else:
+                            piece.add_move(move)
 
         def around_moves(possible_moves):
             for move in possible_moves:
@@ -68,8 +83,16 @@ class Board:
                     if self.fields[move_column][move_row].is_empty_or_is_opponent(piece.color):
                         # possible_move
                         start = Field(column, row)
-                        stop = Field(move_column, move_row)
-                        piece.add_move(Move(start, stop))
+                        final_piece = self.fields[move_column][move_row].piece
+                        stop = Field(move_column, move_row, final_piece)
+                        move = Move(start, stop)
+                        if check_verify:
+                            if not self.in_check(piece, move):
+                                piece.add_move(move)
+                            else:
+                                break
+                        else:
+                            piece.add_move(move)
 
         def longitudinal_moves(directions):
             start = Field(column, row)
@@ -82,17 +105,34 @@ class Board:
                     stop_row += row_dir
                     if Field.in_range(stop_column, stop_row):
                         if self.fields[stop_column][stop_row].is_empty():
-                            stop = Field(stop_column, stop_row)
-                            piece.add_move(Move(start, stop))
+                            final_piece = self.fields[stop_column][stop_row].piece
+                            stop = Field(stop_column, stop_row, final_piece)
+                            move = Move(start, stop)
+                            if check_verify:
+                                if not self.in_check(piece, move):
+                                    piece.add_move(move)
+                            else:
+                                piece.add_move(move)
                         elif self.fields[stop_column][stop_row].is_opponent(piece.color):
-                            stop = Field(stop_column, stop_row)
-                            piece.add_move(Move(start, stop))
+                            final_piece = self.fields[stop_column][stop_row].piece
+                            stop = Field(stop_column, stop_row, final_piece)
+                            move = Move(start, stop)
+                            if check_verify:
+                                if not self.in_check(piece, move):
+                                    piece.add_move(move)
+                            else:
+                                piece.add_move(move)
                             break
                         else:
-                            # (is_mine)
                             break
                     else:
                         break
+
+        def king_moves(moves):
+            if not piece.moved:
+                pass
+
+            around_moves(king_normal_moves)
 
         # -------------- #
         if isinstance(piece, Pawn):
@@ -124,15 +164,34 @@ class Board:
                 (-1, 1), (1, 1)     # left-down, right-down
             ])
         elif isinstance(piece, King):
-            around_moves([
+            king_normal_moves = [
                 (column - 1, row + 1), (column, row + 1), (column + 1, row + 1),
                 (column - 1, row), (column + 1, row),
                 (column - 1, row - 1), (column, row - 1), (column + 1, row - 1),
-            ])
+            ]
+            king_moves(king_normal_moves)
 
     def check_promotion(self, piece, stop):
         if stop.row == 0 or stop.row == 7:
             self.fields[stop.column][stop.row].piece = Queen(piece.color)
+
+    def castling(self, start, stop):
+        pass
+
+    def in_check(self, piece, move):
+        temp_piece = copy.deepcopy(piece)
+        temp_board = copy.deepcopy(self)
+        temp_board.move(temp_piece, move)
+
+        for column in range(COLUMNS):
+            for row in range(ROWS):
+                if temp_board.fields[column][row].is_opponent(piece.color):
+                    opponent = temp_board.fields[column][row].piece
+                    temp_board.allowed_moves(opponent, column, row, check_verify=False)
+                    for opponent_move in opponent.moves:
+                        if isinstance(opponent_move.stop.piece, King):
+                            return True
+        return False
 
     def _add_pieces(self, color):
         row_pawn, row_other = (6, 7) if color == 'white' else (1, 0)
@@ -140,23 +199,26 @@ class Board:
         # add pawns
         for column in range(COLUMNS):
             self.fields[column][row_pawn].piece = Pawn(color)
-        self.fields[0][5].piece = Pawn(color)
+
 
         # add knights
         self.fields[1][row_other].piece = Knight(color)
         self.fields[6][row_other].piece = Knight(color)
-        self.fields[3][3].piece = Knight(color)
+
 
         # add bishops
         self.fields[2][row_other].piece = Bishop(color)
         self.fields[5][row_other].piece = Bishop(color)
 
         # to delete
+        """
+        self.fields[0][5].piece = Pawn(color)
         self.fields[7][5].piece = Bishop(color)
         self.fields[4][4].piece = Rook(color)
         self.fields[6][5].piece = Queen(color)
         self.fields[4][5].piece = King(color)
-
+        self.fields[3][3].piece = Knight(color)
+        """
         # add rooks
         self.fields[0][row_other].piece = Rook(color)
         self.fields[7][row_other].piece = Rook(color)

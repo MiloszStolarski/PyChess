@@ -7,6 +7,7 @@ from visual.config import Config
 from logic.field import Field
 
 
+
 class Game:
 
     def __init__(self):
