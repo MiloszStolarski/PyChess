@@ -1,6 +1,5 @@
 import pygame
 from logic.game import Game
-from menu.button import Button
 from logic.field import Field
 from logic.move import Move
 from logic.const import *
@@ -14,7 +13,6 @@ class Main:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.game = Game()
         self.clock = pygame.time.Clock()
-        self.objects = [Button(self.screen, 4 * WIDTH // 5, HEIGHT / 2, 200, 100, 'button')]
 
     def run(self):
         screen = self.screen
@@ -39,7 +37,6 @@ class Main:
 
                     clicked_column = dragger.mouse_coords[0] // SQ_SIZE
                     clicked_row = dragger.mouse_coords[1] // SQ_SIZE
-                    print(clicked_column, clicked_row)
 
                     if clicked_column < COLUMNS and clicked_row < ROWS:
 
@@ -79,6 +76,7 @@ class Main:
                         if board.valid_move(dragger.dragged_piece, move):
                             captured = board.fields[released_column][released_row].is_not_empty()
                             board.move(dragger.dragged_piece, move)
+                            board.en_passant_set(dragger.dragged_piece)
                             game.sound_effect(captured)
                             game.show_board(screen)
                             game.show_last_move(screen)
@@ -97,11 +95,11 @@ class Main:
                 elif event.type == pygame.QUIT:
                     pygame.quit()
                     raise SystemExit
-
+            """
             # Logical updates
             for obj in self.objects:
                 obj.process(self.screen)
-
+            """
             self.clock.tick(FPS)
             pygame.display.update()
 

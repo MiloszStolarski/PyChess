@@ -3,7 +3,7 @@ COLUMNS = ROWS = 8
 
 
 # Screen dimensions
-WIDTH = 1280
+WIDTH = 800
 HEIGHT = 800
 
 # Font settings

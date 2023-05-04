@@ -8,8 +8,9 @@ It is designed to mirror the game of chess using a computer. This application do
 
 ### Game logic
   - setting up the chessboard
-  - moving pawns
-  - knocking down opponent's pawns
+  - moving pieces
+  - knocking down opponent's pieces
+  - en passant
   
   
 ### User facilities
@@ -22,7 +23,7 @@ It is designed to mirror the game of chess using a computer. This application do
   
 ### More opportunities coming soon
   - examples of use in the form of photos and others
-  - all kinds of chess rules like: Castling, En passant, Promotion, Checkmate, Mate, Stalemate...
+  - all kinds of chess rules like: Castling, Promotion, Checkmate, Mate, Stalemate...
   - menu
   - LAN games
   - turn the script into an app

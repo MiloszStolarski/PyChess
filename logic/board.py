@@ -1,9 +1,10 @@
 import copy
-
 from logic.const import ROWS, COLUMNS
 from logic.field import Field
 from logic.piece import *
 from logic.move import Move
+from visual.sound import Sound
+
 
 
 class Board:
@@ -15,18 +16,34 @@ class Board:
         self._add_pieces('white')
         self._add_pieces('black')
 
-    def move(self, piece, move):
+    def move(self, piece, move, remover=False):
         start = move.start
         stop = move.stop
 
+        # en passant detect
+        en_passant_empty = self.fields[stop.column][stop.row].is_empty()
+
+        # board update
         self.fields[start.column][start.row].piece = None
         self.fields[stop.column][stop.row].piece = piece
 
         if isinstance(piece, Pawn):
+            # en passant capture
+            diff = stop.column - start.column
+            if diff != 0 and en_passant_empty:
+                self.fields[start.column + diff][start.row].piece = None
+                self.fields[stop.column][stop.row].piece = piece
+                if not remover:
+                    sound = Sound(os.path.join(
+                        'sounds/capture.wav'
+                    ))
+                    sound.play()
+
             self.check_promotion(piece, stop)
 
+        # castling
         if isinstance(piece, King):
-            if self.castling(start, stop):
+            if self.castling(start, stop) and not remover:
                 diff = stop.column - start.column
                 rook = piece.further_rook if (diff < 0) else piece.closer_rook
                 self.move(rook, rook.moves[-1])
@@ -82,6 +99,38 @@ class Board:
                         else:
                             piece.add_move(move)
 
+            # en passant
+            r = 3 if piece.color == 'white' else 4
+            final_row = 2 if piece.color == 'white' else 5
+            if Field.in_range(column - 1) and row == r:
+                if self.fields[column - 1][r].is_opponent(piece.color):
+                    p = self.fields[column - 1][row].piece
+                    if isinstance(p, Pawn):
+                        if p.en_passant:
+                            start = Field(column, row)
+                            stop = Field(column - 1, final_row, p)
+                            move = Move(start, stop)
+                            if check_verify:
+                                if not self.in_check(piece, move):
+                                    piece.add_move(move)
+                            else:
+                                piece.add_move(move)
+
+            if Field.in_range(column + 1) and row == r:
+                if self.fields[column + 1][r].is_opponent(piece.color):
+                    p = self.fields[column + 1][row].piece
+                    if isinstance(p, Pawn):
+                        if p.en_passant:
+                            start = Field(column, row)
+                            stop = Field(column + 1, final_row, p)
+                            move = Move(start, stop)
+                            if check_verify:
+                                if not self.in_check(piece, move):
+                                    piece.add_move(move)
+                            else:
+                                piece.add_move(move)
+
+
         def around_moves(possible_moves):
             for move in possible_moves:
                 move_column, move_row = move
@@ -135,6 +184,8 @@ class Board:
                         break
 
         def king_moves(moves):
+            # castling upgrade with checks and capture on king, king should move under check
+
             around_moves(king_normal_moves)
             if not piece.moved:
                 closer_rook = self.fields[7][row].piece
@@ -239,7 +290,7 @@ class Board:
     def in_check(self, piece, move):
         temp_piece = copy.deepcopy(piece)
         temp_board = copy.deepcopy(self)
-        temp_board.move(temp_piece, move)
+        temp_board.move(temp_piece, move, remover=True)
 
         for column in range(COLUMNS):
             for row in range(ROWS):
@@ -250,6 +301,15 @@ class Board:
                         if isinstance(opponent_move.stop.piece, King):
                             return True
         return False
+
+    def en_passant_set(self, piece):
+        if not isinstance(piece, Pawn):
+           return
+        for column in range(COLUMNS):
+            for row in range(ROWS):
+                if isinstance(self.fields[column][row].piece, Pawn):
+                    self.fields[column][row].piece.en_passant = False
+        piece.en_passant = True
 
     def _add_pieces(self, color):
         row_pawn, row_other = (6, 7) if color == 'white' else (1, 0)
