@@ -150,13 +150,21 @@ class Board:
 
                             start = Field(0, row)
                             stop = Field(3, row)
-                            move = Move(start, stop)
-                            further_rook.add_move(move)
+                            move_rook = Move(start, stop)
+                            further_rook.add_move(move_rook)
 
                             start = Field(column, row)
                             stop = Field(2, row)
-                            move = Move(start, stop)
-                            piece.add_move(move)
+                            move_king = Move(start, stop)
+                            piece.add_move(move_king)
+
+                            if check_verify:
+                                if not self.in_check(piece, move_king) and not self.in_check(further_rook, move_rook):
+                                    piece.add_move(move_king)
+                                    further_rook.add_move(move_rook)
+                            else:
+                                piece.add_move(move_king)
+                                further_rook.add_move(move_rook)
 
                 if isinstance(closer_rook, Rook) and not closer_rook.moved:
                     # checking if is piece between Rook and King
@@ -168,13 +176,21 @@ class Board:
 
                             start = Field(7, row)
                             stop = Field(5, row)
-                            move = Move(start, stop)
-                            closer_rook.add_move(move)
+                            move_rook = Move(start, stop)
+                            closer_rook.add_move(move_rook)
 
                             start = Field(column, row)
                             stop = Field(6, row)
-                            move = Move(start, stop)
-                            piece.add_move(move)
+                            move_king = Move(start, stop)
+                            piece.add_move(move_king)
+
+                            if check_verify:
+                                if not self.in_check(piece, move_king) and not self.in_check(further_rook, move_rook):
+                                    piece.add_move(move_king)
+                                    further_rook.add_move(move_rook)
+                            else:
+                                piece.add_move(move_king)
+                                further_rook.add_move(move_rook)
 
         # ---------------------------- #
         if isinstance(piece, Pawn):
