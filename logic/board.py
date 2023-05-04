@@ -20,8 +20,11 @@ class Board:
         self.fields[start.column][start.row].piece = None
         self.fields[stop.column][stop.row].piece = piece
 
+        if isinstance(piece, Pawn):
+            self.check_promotion(piece, stop)
+
         piece.moved = True
-        piece.clear_moves()     # nie kasuje ruchow innych pionkow po kazdym ruchu
+        piece.clear_moves()
 
         self.last_move = move
 
@@ -126,6 +129,10 @@ class Board:
                 (column - 1, row), (column + 1, row),
                 (column - 1, row - 1), (column, row - 1), (column + 1, row - 1),
             ])
+
+    def check_promotion(self, piece, stop):
+        if stop.row == 0 or stop.row == 7:
+            self.fields[stop.column][stop.row].piece = Queen(piece.color)
 
     def _add_pieces(self, color):
         row_pawn, row_other = (6, 7) if color == 'white' else (1, 0)

@@ -24,7 +24,7 @@ class Dragger:
         self.dragged_piece = None
         self.dragging = False
 
-    def allow_piece_dragging(self, screen):
+    def piece_dragging(self, screen):
         """Zoom in on the chess piece and make it follow the mouse"""
 
         self.dragged_piece.set_image(ENLARGED_SIZE)

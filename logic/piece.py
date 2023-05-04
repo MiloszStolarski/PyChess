@@ -52,7 +52,6 @@ class Rook(Piece):
 
 
 class Queen(Piece):
-    # powinna byc z rook i bishopa
 
     def __init__(self, color):
         super().__init__('queen', color, 9)

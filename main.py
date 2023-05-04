@@ -10,7 +10,7 @@ class Main:
 
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption("MyChess")
+        pygame.display.set_caption("PyChess")
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.game = Game()
         self.clock = pygame.time.Clock()
@@ -29,7 +29,7 @@ class Main:
             game.show_pieces(screen)
 
             if dragger.dragging:
-                dragger.allow_piece_dragging(screen)
+                dragger.piece_dragging(screen)
 
             # --- Process player inputs ---
             for event in pygame.event.get():
@@ -39,6 +39,7 @@ class Main:
 
                     clicked_column = dragger.mouse_coords[0] // SQ_SIZE
                     clicked_row = dragger.mouse_coords[1] // SQ_SIZE
+                    print(clicked_column, clicked_row)
 
                     if clicked_column < COLUMNS and clicked_row < ROWS:
 
@@ -61,7 +62,7 @@ class Main:
                         game.show_last_move(screen)
                         game.show_moves(screen)
                         game.show_pieces(screen)
-                        dragger.allow_piece_dragging(screen)
+                        dragger.piece_dragging(screen)
 
                 # Click release
                 elif event.type == pygame.MOUSEBUTTONUP:
