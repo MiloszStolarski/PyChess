@@ -10,20 +10,24 @@ It is designed to mirror the game of chess using a computer. This application do
   - setting up the chessboard
   - moving pieces
   - knocking down opponent's pieces
+  - turn-based gameplay
   - en passant
-  
+  - castling
+  - checks
+  - pawn promotion
   
 ### User facilities
   - proposed possible moves
   - making the last move visible
   
 ### Impressions of the game
-  - changing the color palette of the chessboard
+  - changing the color palette of the chessboard (under 'c' key)
   - the sounds of the execution of the movement and the capture
   
 ### More opportunities coming soon
   - examples of use in the form of photos and others
-  - all kinds of chess rules like: Castling, Promotion, Checkmate, Mate, Stalemate...
+  - castling improve
+  - stalemate, draw and win scenarios
   - menu
   - LAN games
   - turn the script into an app
@@ -40,4 +44,4 @@ Image illustrating state of work:
 <br>
 <br>
 <br>
-*I highly recommend this video: https://youtu.be/OpL0Gcfn4B4*
+*I highly recommend this video:* https://youtu.be/OpL0Gcfn4B4

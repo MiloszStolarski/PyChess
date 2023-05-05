@@ -34,15 +34,12 @@ class Main:
             for event in pygame.event.get():
                 # Click
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    print("#--------------------------------------------------------#")
                     dragger.update_mouse(event.pos)
 
                     clicked_column = dragger.mouse_coords[0] // SQ_SIZE
                     clicked_row = dragger.mouse_coords[1] // SQ_SIZE
 
                     if clicked_column < COLUMNS and clicked_row < ROWS:
-                        print(board.fields[clicked_column][clicked_row].piece)
-
                         if board.fields[clicked_column][clicked_row].is_not_empty():
                             piece = board.fields[clicked_column][clicked_row].piece
                             if piece.color == game.next_player:

@@ -12,9 +12,9 @@ class Board:
     def __init__(self):
         self.fields = [[Field(column, row) for column in range(COLUMNS)] for row in range(ROWS)]
         self.last_move = None
-        self._test_board()
-        #self._add_pieces('white')
-        #self._add_pieces('black')
+        #  self._test_board()
+        self._add_pieces('white')
+        self._add_pieces('black')
 
     def move(self, piece, move, remover=False):
         start = move.start
@@ -143,7 +143,6 @@ class Board:
                         final_piece = self.fields[move_column][move_row].piece
                         stop = Field(move_column, move_row, final_piece)
                         move = Move(start, stop)
-                        print("przeszlo: ", move.stop)
                         if check_verify:
                             if not self.in_check(piece, move):
                                 piece.add_move(move)
@@ -309,7 +308,6 @@ class Board:
         temp_piece = copy.deepcopy(piece)
         temp_board = copy.deepcopy(self)
         temp_board.move(temp_piece, move, remover=True)
-        print(f"Otrzymano ruch: {move.start} -> {move.stop}")
 
         for column in range(COLUMNS):
             for row in range(ROWS):
@@ -318,7 +316,6 @@ class Board:
                     temp_board.allowed_moves(opponent, column, row, check_verify=False)
                     for opponent_move in opponent.moves:
                         if isinstance(opponent_move.stop.piece, King):
-                            print("Pole znaleziono jako w szachu", opponent_move.stop)
                             return True
         return False
 
