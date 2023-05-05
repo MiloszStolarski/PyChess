@@ -12,9 +12,9 @@ class Board:
     def __init__(self):
         self.fields = [[Field(column, row) for column in range(COLUMNS)] for row in range(ROWS)]
         self.last_move = None
-
-        self._add_pieces('white')
-        self._add_pieces('black')
+        self._test_board()
+        #self._add_pieces('white')
+        #self._add_pieces('black')
 
     def move(self, piece, move, remover=False):
         start = move.start
@@ -47,6 +47,9 @@ class Board:
                 diff = stop.column - start.column
                 rook = piece.further_rook if (diff < 0) else piece.closer_rook
                 self.move(rook, rook.moves[-1])
+
+        if isinstance(piece, Pawn):
+            self.check_promotion(piece, stop)
 
         piece.moved = True
         piece.clear_moves()
@@ -130,7 +133,6 @@ class Board:
                             else:
                                 piece.add_move(move)
 
-
         def around_moves(possible_moves):
             for move in possible_moves:
                 move_column, move_row = move
@@ -141,11 +143,10 @@ class Board:
                         final_piece = self.fields[move_column][move_row].piece
                         stop = Field(move_column, move_row, final_piece)
                         move = Move(start, stop)
+                        print("przeszlo: ", move.stop)
                         if check_verify:
                             if not self.in_check(piece, move):
                                 piece.add_move(move)
-                            else:
-                                break
                         else:
                             piece.add_move(move)
 
@@ -158,6 +159,7 @@ class Board:
                 while True:
                     stop_column += column_dir
                     stop_row += row_dir
+                    """
                     if Field.in_range(stop_column, stop_row):
                         if self.fields[stop_column][stop_row].is_empty():
                             final_piece = self.fields[stop_column][stop_row].piece
@@ -180,13 +182,29 @@ class Board:
                             break
                         else:
                             break
+                    """
+                    if Field.in_range(stop_column, stop_row):
+                        field = self.fields[stop_column][stop_row]
+                        if field.is_empty_or_is_opponent(piece.color):
+                            final_piece = field.piece
+                            stop = Field(stop_column, stop_row, final_piece)
+                            move = Move(start, stop)
+                            if check_verify:
+                                if not self.in_check(piece, move):
+                                    piece.add_move(move)
+                            else:
+                                piece.add_move(move)
+                            if field.is_opponent(piece.color):
+                                break
+                        else:
+                            break
                     else:
                         break
 
         def king_moves(moves):
-            # castling upgrade with checks and capture on king, king should move under check
-
-            around_moves(king_normal_moves)
+            # castling upgrade with checks
+            around_moves(moves)
+            # castling
             if not piece.moved:
                 closer_rook = self.fields[7][row].piece
                 further_rook = self.fields[0][row].piece
@@ -291,6 +309,7 @@ class Board:
         temp_piece = copy.deepcopy(piece)
         temp_board = copy.deepcopy(self)
         temp_board.move(temp_piece, move, remover=True)
+        print(f"Otrzymano ruch: {move.start} -> {move.stop}")
 
         for column in range(COLUMNS):
             for row in range(ROWS):
@@ -299,6 +318,7 @@ class Board:
                     temp_board.allowed_moves(opponent, column, row, check_verify=False)
                     for opponent_move in opponent.moves:
                         if isinstance(opponent_move.stop.piece, King):
+                            print("Pole znaleziono jako w szachu", opponent_move.stop)
                             return True
         return False
 
@@ -318,25 +338,14 @@ class Board:
         for column in range(COLUMNS):
             self.fields[column][row_pawn].piece = Pawn(color)
 
-
         # add knights
         self.fields[1][row_other].piece = Knight(color)
         self.fields[6][row_other].piece = Knight(color)
-
 
         # add bishops
         self.fields[2][row_other].piece = Bishop(color)
         self.fields[5][row_other].piece = Bishop(color)
 
-        # to delete
-        """
-        self.fields[0][5].piece = Pawn(color)
-        self.fields[7][5].piece = Bishop(color)
-        self.fields[4][4].piece = Rook(color)
-        self.fields[6][5].piece = Queen(color)
-        self.fields[4][5].piece = King(color)
-        self.fields[3][3].piece = Knight(color)
-        """
         # add rooks
         self.fields[0][row_other].piece = Rook(color)
         self.fields[7][row_other].piece = Rook(color)
@@ -346,3 +355,12 @@ class Board:
 
         # add king
         self.fields[4][row_other].piece = King(color)
+
+    def _test_board(self):
+        self.fields[3][5].piece = King('white')
+        self.fields[3][6].piece = Queen('white')
+        self.fields[3][7].piece = Rook('white')
+
+        self.fields[3][2].piece = King('black')
+        self.fields[3][1].piece = Queen('black')
+

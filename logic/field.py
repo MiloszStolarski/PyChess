@@ -10,11 +10,10 @@ class Field:
         self.alphacol = self.ALPHACOLS[column]
 
     def __str__(self):
-        return f"Field[{self.column} {self.row}]"
+        return f"Field[{self.alphacol} {8 - self.row}]"
 
     def __eq__(self, other):
         return self.column == other.column and self.row == other.row
-
 
     def is_empty(self):
         return self.piece is None
