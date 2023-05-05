@@ -1,5 +1,6 @@
 import pygame
 from logic.game import Game
+from menu.button import Button
 from logic.field import Field
 from logic.move import Move
 from logic.const import *

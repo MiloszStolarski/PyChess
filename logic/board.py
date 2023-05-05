@@ -12,9 +12,9 @@ class Board:
     def __init__(self):
         self.fields = [[Field(column, row) for column in range(COLUMNS)] for row in range(ROWS)]
         self.last_move = None
-
-        self._add_pieces('white')
-        self._add_pieces('black')
+        self._test_board()
+        #self._add_pieces('white')
+        #self._add_pieces('black')
 
     def move(self, piece, move, remover=False):
         start = move.start
@@ -158,6 +158,7 @@ class Board:
                 while True:
                     stop_column += column_dir
                     stop_row += row_dir
+                    """
                     if Field.in_range(stop_column, stop_row):
                         if self.fields[stop_column][stop_row].is_empty():
                             final_piece = self.fields[stop_column][stop_row].piece
@@ -180,12 +181,27 @@ class Board:
                             break
                         else:
                             break
+                    """
+                    if Field.in_range(stop_column, stop_row):
+                        field = self.fields[stop_column][stop_row]
+                        if field.is_empty_or_is_opponent(piece.color):
+                            final_piece = field.piece
+                            stop = Field(stop_column, stop_row, final_piece)
+                            move = Move(start, stop)
+                            if check_verify:
+                                if not self.in_check(piece, move):
+                                    piece.add_move(move)
+                            else:
+                                piece.add_move(move)
+                            if field.is_opponent(piece.color):
+                                break
+
+
                     else:
                         break
 
         def king_moves(moves):
-            # castling upgrade with checks and capture on king, king should move under check
-
+            # castling upgrade with checks and capture on king
             around_moves(king_normal_moves)
             if not piece.moved:
                 closer_rook = self.fields[7][row].piece
@@ -346,3 +362,10 @@ class Board:
 
         # add king
         self.fields[4][row_other].piece = King(color)
+
+    def _test_board(self):
+        self.fields[3][4].piece = King('white')
+        self.fields[3][5].piece = Queen('white')
+
+        self.fields[3][2].piece = King('black')
+        self.fields[3][1].piece = Queen('black')
