@@ -1,6 +1,6 @@
 import pygame
+import os
 from logic.game import Game
-from menu.button import Button
 from logic.field import Field
 from logic.move import Move
 from logic.const import *
@@ -11,6 +11,10 @@ class Main:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption("PyChess")
+        self.icon = pygame.image.load(os.path.join(
+            'images/images_90px/pawn_black.png'
+        ))
+        pygame.display.set_icon(self.icon)
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.game = Game()
         self.clock = pygame.time.Clock()
