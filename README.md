@@ -8,22 +8,18 @@ It is designed to mirror the game of chess using a computer. This application do
 
 
   
-
   
 ### Impressions of the game
   - changing the color palette of the chessboard (under 'c' key)
-<br>
-![Colors of the board](https://github.com/MiloszStolarski/PyChess/blob/main/images/for_readme/colors_of_the_board.gif)
-<br>
   - the sounds of the execution of the movement and the capture
+
+![Colors of the board](https://github.com/MiloszStolarski/PyChess/blob/main/images/for_readme/colors_of_the_board.gif)
 
 ### User facilities
   - proposed possible moves
   - making the last move visible
-<br>
-![User facilities](https://github.com/MiloszStolarski/PyChess/blob/main/images/for_readme/user_facilities.gif)
-<br>
 
+![User facilities](https://github.com/MiloszStolarski/PyChess/blob/main/images/for_readme/user_facilities.gif)
 
 ### Game logic
   - setting up the chessboard
@@ -34,9 +30,8 @@ It is designed to mirror the game of chess using a computer. This application do
   - castling
   - checks
   - pawn promotion
-<br>
-![Work progress](https://github.com/MiloszStolarski/PyChess/blob/main/images/for_readme/work_progress.gif)
-<br>
+ 
+ ![Work progress](https://github.com/MiloszStolarski/PyChess/blob/main/images/for_readme/work_progress.gif)
 
   
 ### More opportunities coming soon
