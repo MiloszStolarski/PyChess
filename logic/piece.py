@@ -29,9 +29,9 @@ class Piece:
 class Pawn(Piece):
 
     def __init__(self, color):
+        super().__init__('pawn', color, 1)
         self.direction = -1 if color == 'white' else 1
         self.en_passant = False
-        super().__init__('pawn', color, 1)
 
 
 class Knight(Piece):
@@ -39,11 +39,23 @@ class Knight(Piece):
     def __init__(self, color):
         super().__init__('knight', color, 3)
 
+    @staticmethod
+    def special_moves(column, row):
+        return [(column + 2, row - 1), (column + 2, row + 1),
+                (column + 1, row - 2), (column + 1, row + 2),
+                (column - 1, row - 2), (column - 1, row + 2),
+                (column - 2, row - 1), (column - 2, row + 1)]
+
 
 class Bishop(Piece):
 
     def __init__(self, color):
         super().__init__('bishop', color, 3)
+
+    @staticmethod
+    def special_moves():
+        return [(-1, -1), (1, -1),  # left-up, right-up
+                (-1, 1), (1, 1)]    # left-down, right-down
 
 
 class Rook(Piece):
@@ -51,16 +63,36 @@ class Rook(Piece):
     def __init__(self, color):
         super().__init__('rook', color, 5)
 
+    @staticmethod
+    def special_moves():
+        return [(0, -1),            # up
+                (-1, 0), (1, 0),    # left, right
+                (0, 1)]             # down
+
 
 class Queen(Piece):
 
     def __init__(self, color):
         super().__init__('queen', color, 9)
 
+    @staticmethod
+    def special_moves():
+        return [(0, -1),            # up
+                (-1, 0), (1, 0),    # left, right
+                (0, 1),             # down
+                (-1, -1), (1, -1),  # left-up, right-up
+                (-1, 1), (1, 1)]    # left-down, right-down
+
 
 class King(Piece):
 
     def __init__(self, color):
+        super().__init__('king', color, 4)
         self.closer_rook = None
         self.further_rook = None
-        super().__init__('king', color, 4)
+
+    @staticmethod
+    def special_moves(column, row):
+        return [(column - 1, row + 1), (column, row + 1), (column + 1, row + 1),
+                (column - 1, row), (column + 1, row),
+                (column - 1, row - 1), (column, row - 1), (column + 1, row - 1)]

@@ -4,6 +4,7 @@ from logic.game import Game
 from logic.field import Field
 from logic.move import Move
 from logic.const import *
+from logic.allowed_moves import AllowedMoves
 
 
 class Main:
@@ -47,7 +48,7 @@ class Main:
                         if board.fields[clicked_column][clicked_row].is_not_empty():
                             piece = board.fields[clicked_column][clicked_row].piece
                             if piece.color == game.next_player:
-                                board.allowed_moves(piece, clicked_column, clicked_row)
+                                AllowedMoves.detect(piece, clicked_column, clicked_row, board)
                                 dragger.save_coords((clicked_column, clicked_row))
                                 dragger.drag_piece(piece)
                                 game.show_board(screen)
@@ -80,7 +81,7 @@ class Main:
                         if board.valid_move(dragger.dragged_piece, move):
                             captured = board.fields[released_column][released_row].is_not_empty()
                             board.move(dragger.dragged_piece, move)
-                            board.en_passant_set(dragger.dragged_piece)
+                            AllowedMoves.en_passant_set(dragger.dragged_piece, board)
                             game.sound_effect(captured)
                             game.show_board(screen)
                             game.show_last_move(screen)
