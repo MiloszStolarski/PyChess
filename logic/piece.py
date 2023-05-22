@@ -14,6 +14,9 @@ class Piece:
         self.moves = []
         self.moved = False
 
+    def __str__(self):
+        return self.name
+
     def set_image(self, size=DEFAULT_SIZE):
         self.image_path = os.path.join(
             f'images/images_{size}px/{self.name}_{self.color}.png'

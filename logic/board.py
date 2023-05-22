@@ -2,6 +2,7 @@ from logic.const import ROWS, COLUMNS
 from logic.field import Field
 from logic.piece import *
 from logic.allowed_moves import AllowedMoves
+from menu.ending import Ending
 
 
 class Board:
@@ -11,19 +12,13 @@ class Board:
         self.last_move = None
         self._add_pieces('white')
         self._add_pieces('black')
-        self.movements_without_capture = 0
-        #  self._test_board()
+        self.ending = Ending(self)
+        self.which_move = None
 
     def move(self, piece, move, remover=False):
 
         start = move.start
         stop = move.stop
-
-        # probability draw by moves repetition
-        if self.fields[stop.column][stop.row].is_not_empty() and isinstance(piece, Pawn):
-            self.movements_without_capture = 0
-        else:
-            self.movements_without_capture += 1
 
         if isinstance(piece, Pawn):
             AllowedMoves.en_passant_capture_sound(piece, start, stop, self, remover)
@@ -41,6 +36,7 @@ class Board:
         piece.clear_moves()
 
         self.last_move = move
+        self.which_move = 'black' if piece.color == 'white' else 'white'
 
     @staticmethod
     def valid_move(piece, move):
