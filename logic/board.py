@@ -10,10 +10,11 @@ class Board:
     def __init__(self):
         self.fields = [[Field(column, row) for row in range(ROWS)] for column in range(COLUMNS)]
         self.last_move = None
-        self._add_pieces('white')
-        self._add_pieces('black')
+        #self._add_pieces('white')
+        #self._add_pieces('black')
         self.ending = Ending(self)
-        self.which_move = None
+        self.game_result = None
+        self._test_board()
 
     def move(self, piece, move, remover=False):
 
@@ -36,7 +37,8 @@ class Board:
         piece.clear_moves()
 
         self.last_move = move
-        self.which_move = 'black' if piece.color == 'white' else 'white'
+
+        self.game_result = self.ending.check_result(piece, self.last_move)
 
     @staticmethod
     def valid_move(piece, move):
@@ -66,3 +68,11 @@ class Board:
 
         # add king
         self.fields[4][row_other].piece = King(color)
+
+    def _test_board(self):
+        self.fields[7][0].piece = King('white')
+        self.fields[0][5].piece = Rook('white')
+        self.fields[0][4].piece = Rook('white')
+
+        self.fields[5][1].piece = King('black')
+        self.fields[4][4].piece = Knight('black')

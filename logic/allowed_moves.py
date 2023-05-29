@@ -9,7 +9,7 @@ from visual.sound import Sound
 class AllowedMoves:
 
     @staticmethod
-    def detect(piece, column, row, board, check_verify=True):
+    def detect(piece, column, row, board, check_verify=True, boolean=False):
         """Check possible moves for piece"""
 
         def around_moves(possible_moves):
@@ -179,6 +179,12 @@ class AllowedMoves:
                             else:
                                 piece.add_move(move_king)
                                 closer_rook.add_move(move_rook)
+        if boolean:
+            if piece.moves:
+                piece.clear_moves()
+                return True
+            else:
+                return False
 
         # ---------------------------- #
 
